@@ -6,7 +6,9 @@ class OrderFulfillmentFacade:
         self.notification = notification
 
     def place_order(self, order):
-        self.inventory.check_and_reserve(order) 
-        self.payment.process(order)
-        self.shipping.schedule(order)
-        self.notification.send(order)
+        return [
+            self.inventory.reserve(order),
+            self.payment.charge(order),
+            self.shipping.create_shipment(order),
+            self.notification.send_confirmation(order),
+        ]
